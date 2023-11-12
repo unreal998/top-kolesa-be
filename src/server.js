@@ -146,12 +146,51 @@ app.get('/filterData', function(clientRequest, clientResponse) {
 
 app.get('/item', function(clientRequest, clientResponse) {
     const query = clientRequest.query;
-    console.log(query);
     db.query(`SELECT *
     FROM ${`mod_tires`}, ${`mod_tires_prices`}
     WHERE mod_tires.id = mod_tires_prices.tire_id`, function (err, result) {
         if (err) throw err;
         clientResponse.send(JSON.stringify(result))
+    })
+})
+
+app.post('/order', function(clientRequest, clientResponse) {
+    const body = clientRequest.body;
+    db.query('SELECT id FROM `mod_orders_content`', function(err, result) {
+        if (err) throw err;
+        const id = result[result.length - 1].id + 1
+        db.query('SELECT id FROM `mod_orders`', function(err, result) {
+            if (err) throw err;
+            const orderId = result[result.length - 1].id + 1
+            db.query(`INSERT INTO mod_orders_content VALUES(` +
+            `${id}, ${orderId}, ${body.brandId}, ${body.modelId}, ${body.sizeId},` +
+            `${body.locationId}, ${body.supplierId}, ${body.paymentId}, ${body.paymentCost},` +
+            `${body.paymentCostType}, '${body.paymentComment}', ${body.shipmentId}, ${body.shipmentCost},` +
+            `${body.shipmentCostType}, '${body.shipmentComment}', ${body.shipmentCompId},` +
+            `${body.otherCost}, '${body.otherCostName}', ${body.otherCostType}, ${body.discount}, ${body.profit},` +
+            `${body.prepay}, '${body.country}', ${body.year}, ${body.inWarehous},` +
+            `'${body.productType}', '${body.brand}', '${body.tireName}', '${body.size}',` +
+            `${body.quantity}, ${body.priceBuy}, ${body.priceSell}, '${body.createdAt}',` +
+            `'${body.updatedAt}')`, function(err, result) {
+                if (err) throw err;
+                db.query(`INSERT INTO mod_orders VALUES(` +
+                    `${orderId}, ${body.userId}, ${body.statusId}, ${body.customerId},` +
+                    `${body.cityId}, ${body.paymentStatusId}, ${body.shipCompId}, ${body.paymentId},` +
+                    `${body.paymentCost}, ${body.paymentCostType}, ${body.shipmentId}, ${body.shipmentCost},` +
+                    `${body.shipmentCostType}, ${body.driverId}, ${body.driverCost}, ${body.driverCostType},` +
+                    `${body.otherCost}, '${body.otherCostName}', ${body.otherCostType}, ${body.sellSum}, ${body.profit},` +
+                    `'${body.nameFirm}', '${body.name}', '${body.phone}', '${body.phoneIndex}',` +
+                    `'${body.email}', '${body.addressCity}', '${body.address}', '${body.shipment}',` +
+                    `'${body.shipmentFrom}', '${body.shipmentUntil}', '${body.comment}', '${body.source}',` +
+                    `'${body.referer}', ${body.forPrint}, ${body.forExport}, ${body.checkNum},` +
+                    `'${body.checkDate}', '${body.checkPayer}', '${body.paymentType}', ${body.politicsCheckBox},` +
+                    `'${body.smsText}', '${body.smsSendAt}', '${body.createdAt}', '${body.updatedAt}'` +
+                    `)`, function(err, result) {
+                        if (err) clientResponse.send(err);
+                        clientResponse.send({code: 200});
+                })
+            })
+        })
     })
 })
 
