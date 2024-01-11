@@ -157,6 +157,62 @@ app.post('/order', function(clientRequest, clientResponse) {
     })
 })
 
+app.get('/orderData', async function(clientRequest, clientResponse) {
+    const query = clientRequest.query;
+    const orderDataResponce = await getOrderData(query.id, clientResponse);
+    const orderData = orderDataResponce[0];
+    const orderContent = await getOrderContentData(query.id, clientResponse);
+    const {itemsList, totalAmount} = unifiyOrderItemsData(orderContent);
+    const responceData = {
+        orderId: orderData.id,
+        userName: orderData.name,
+        userEmail: orderData.email,
+        orderComment: orderData.comment,
+        deliveryAddress: orderData.address_city + ' ' + orderData.address,
+        phoneNumber: orderData.phone,
+        orderTime: orderData.created_at,
+        itemsList,
+        totalAmount
+    }
+    console.log(responceData);
+    clientResponse.send(responceData);
+})
+
+function unifiyOrderItemsData(orderContent) {
+    let totalAmount = 0;
+    const itemsList = orderContent.map(item => {
+        totalAmount += item.price_buy;
+        return {
+            price: item.price_buy,
+            brand: item.brand,
+            name: item.name,
+            size: item.size,
+            count: item.quantity
+        }
+    })
+    return {itemsList, totalAmount}
+}
+
+async function getOrderData(orderId, clientResponse) {
+    return new Promise( (resolve, reject) => db.query('SELECT * FROM `mod_orders` WHERE `id` = ' + orderId + ' ORDER BY `id`  DESC ', (err, result) => {
+        if (err) {
+            clientResponse.send(err)
+            throw err;
+        }
+        resolve(result);
+    }))
+}
+
+async function getOrderContentData(orderId, clientResponse) {
+    return new Promise( (resolve, reject) => db.query('SELECT * FROM `mod_orders_content` WHERE `order_id` = ' + orderId + ' ORDER BY `id`  DESC ', (err, result) => {
+        if (err) {
+            clientResponse.send(err)
+            throw err;
+        }
+        resolve(result)
+    }))
+}
+
 
 async function addNewOrder(orderItems, id, orderId) {
     const item = orderItems[0]; // first we create an order with single id
