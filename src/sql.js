@@ -92,14 +92,14 @@ export async function getFilterData() {
                                 weightArray.push(item.weight)
                             })
                             responseData.tireSizes.weight = weightArray;
-                            connection.execute(`SELECT DISTINCT name FROM ${`mod_tires_brands`}`, function (err, result) {
+                            connection.execute(`SELECT DISTINCT brand FROM ${`mod_tires_prices`}`, function (err, result) {
                                 if (err) {
                                     connection.release();
                                     reject(err);
                                 }
                                 const brandsArray = []
                                 result.forEach(item => {
-                                    brandsArray.push(item.name)
+                                    brandsArray.push(item.brand)
                                 })
                                 responseData.tireSizes.brands = brandsArray;
                                 connection.execute(`SELECT DISTINCT price_uah FROM ${`mod_tires_prices`}`, function (err, result) {
