@@ -149,16 +149,19 @@ export async function getShopData(queryParam) {
                 tiresQuery += ` AND mod_tires_prices.width = ${JSON.parse(queryParam.width)}`
             }
             if (queryParam.season && JSON.parse(queryParam.season).length) {
+                let seasonString = '';
                 const seasons = JSON.parse(queryParam.season);
-                if (seasons.winter) {
-                    tiresQuery += ` AND mod_tires.season = 'winter'`
-                }
-                if (seasons.summer) {
-                    tiresQuery += ` AND mod_tires.season = 'summer'`
-                }
-                if (seasons.allSeason) {
-                    tiresQuery += ` AND mod_tires.season = 'all-season'`
-                }
+                seasons.forEach((item, index) => {
+                    if (index === seasons.length - 1) {
+                        seasonString += `'${item}'`
+                    } else {
+                        seasonString += `'${item}', `
+                    }
+                   
+                })
+                if (seasonString !== "''") {
+                    tiresQuery += ` AND mod_tires.season IN (${seasonString})`;
+                };
             }
             if (queryParam.brand && JSON.parse(queryParam.brand).length) {
                 let brandString = '';
@@ -171,7 +174,9 @@ export async function getShopData(queryParam) {
                     }
                     
                 });
-                tiresQuery += ` AND mod_tires_prices.brand IN (${brandString})`;
+                if (brandString !== "''") {
+                    tiresQuery += ` AND mod_tires_prices.brand IN (${brandString})`;
+                };
             }
             db.getConnection((err, connection) => {
                 connection.query(tiresQuery, function (err, result) {
