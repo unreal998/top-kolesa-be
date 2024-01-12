@@ -134,25 +134,20 @@ export async function getShopData(queryParam) {
             tiresQuery = `SELECT *
             FROM ${`mod_tires`}, ${`mod_tires_prices`}
             WHERE mod_tires.id = mod_tires_prices.tire_id`;
-            console.log(queryParam);
             if (queryParam.price) {
                 const minPrice = queryParam.price.split('-')[0];
                 const maxPrice = queryParam.price.split('-')[1];
                 tiresQuery += ` AND mod_tires_prices.price_uah > ${minPrice} AND mod_tires_prices.price_uah < ${maxPrice}`
             }
-            console.log('==queryParam.price==');
             if (queryParam.diametr && queryParam.diametr !== '""') {
                 tiresQuery += ` AND mod_tires_prices.diametr = ${JSON.parse(queryParam.diametr)}`
             }
-            console.log('==queryParam.diametr==');
             if (queryParam.profile && queryParam.profile !== '""') {
                 tiresQuery += ` AND mod_tires_prices.height = ${JSON.parse(queryParam.profile)}`
             }
-            console.log('==queryParam.profile==');
             if (queryParam.width && queryParam.width !== '""') {
                 tiresQuery += ` AND mod_tires_prices.width = ${JSON.parse(queryParam.width)}`
             }
-            console.log('==queryParam.width==');
             if (queryParam.season && JSON.parse(queryParam.season).length) {
                 const seasons = JSON.parse(queryParam.season);
                 if (seasons.winter) {
@@ -165,7 +160,6 @@ export async function getShopData(queryParam) {
                     tiresQuery += ` AND mod_tires.season = 'all-season'`
                 }
             }
-            console.log('==queryParam.season==');
             if (queryParam.brand && JSON.parse(queryParam.brand).length) {
                 let brandString = '';
                 const brands = JSON.parse(queryParam.brand);
@@ -177,10 +171,8 @@ export async function getShopData(queryParam) {
                     }
                     
                 });
-                console.log(brandString)
                 tiresQuery += ` AND mod_tires_prices.brand IN (${brandString})`;
             }
-            console.log("ddd======", tiresQuery);
             db.getConnection((err, connection) => {
                 connection.query(tiresQuery, function (err, result) {
                     if (err) {
