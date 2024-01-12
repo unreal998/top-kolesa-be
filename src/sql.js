@@ -127,31 +127,34 @@ export async function getFilterData() {
 
 export async function getShopData(queryParam) {
     return new Promise( (resolve, reject) => {
-        const response = {
-            tiresList: {},
-        }
-        let tiresQuery = ''
-        if (!queryParam.price) {
+            const response = {
+                tiresList: {},
+            }
+            let tiresQuery = '';
             tiresQuery = `SELECT *
             FROM ${`mod_tires`}, ${`mod_tires_prices`}
-            WHERE mod_tires.id = mod_tires_prices.tire_id`
-        } else {
-            const seasons = JSON.parse(queryParam.season);
-            const minPrice = queryParam.price.split('-')[0];
-            const maxPrice = queryParam.price.split('-')[1];
-            tiresQuery = `SELECT *
-            FROM ${`mod_tires`}, ${`mod_tires_prices`}
-            WHERE mod_tires.id = mod_tires_prices.tire_id AND mod_tires_prices.price_uah > ${minPrice} AND mod_tires_prices.price_uah < ${maxPrice}`
-            if (queryParam.diametr !== '""') {
-                tiresQuery += ` AND mod_tires_prices.diametr = ${queryParam.diametr}`
+            WHERE mod_tires.id = mod_tires_prices.tire_id`;
+            console.log(queryParam);
+            if (queryParam.price) {
+                const minPrice = queryParam.price.split('-')[0];
+                const maxPrice = queryParam.price.split('-')[1];
+                tiresQuery += ` AND mod_tires_prices.price_uah > ${minPrice} AND mod_tires_prices.price_uah < ${maxPrice}`
             }
-            if (queryParam.profile !== '""') {
-                tiresQuery += ` AND mod_tires_prices.height = ${queryParam.profile}`
+            console.log('==queryParam.price==');
+            if (queryParam.diametr && queryParam.diametr !== '""') {
+                tiresQuery += ` AND mod_tires_prices.diametr = ${JSON.parse(queryParam.diametr)}`
             }
-            if (queryParam.width !== '""') {
-                tiresQuery += ` AND mod_tires_prices.width = ${queryParam.width}`
+            console.log('==queryParam.diametr==');
+            if (queryParam.profile && queryParam.profile !== '""') {
+                tiresQuery += ` AND mod_tires_prices.height = ${JSON.parse(queryParam.profile)}`
             }
-            if (seasons.winter || seasons.summer || seasons.allSeason) {
+            console.log('==queryParam.profile==');
+            if (queryParam.width && queryParam.width !== '""') {
+                tiresQuery += ` AND mod_tires_prices.width = ${JSON.parse(queryParam.width)}`
+            }
+            console.log('==queryParam.width==');
+            if (queryParam.season && JSON.parse(queryParam.season).length) {
+                const seasons = JSON.parse(queryParam.season);
                 if (seasons.winter) {
                     tiresQuery += ` AND mod_tires.season = 'winter'`
                 }
@@ -162,21 +165,33 @@ export async function getShopData(queryParam) {
                     tiresQuery += ` AND mod_tires.season = 'all-season'`
                 }
             }
-            if (queryParam.brand.length > 2) {
-                tiresQuery += ` AND mod_tires_prices.brand = ${queryParam.brand}`
+            console.log('==queryParam.season==');
+            if (queryParam.brand && JSON.parse(queryParam.brand).length) {
+                let brandString = '';
+                const brands = JSON.parse(queryParam.brand);
+                brands.forEach((item, index) => {
+                    if (index === brands.length - 1) {
+                        brandString += `'${item}'`
+                    } else {
+                        brandString += `'${item}', `
+                    }
+                    
+                });
+                console.log(brandString)
+                tiresQuery += ` AND mod_tires_prices.brand IN (${brandString})`;
             }
-        }
-        db.getConnection((err, connection) => {
-            connection.query(tiresQuery, function (err, result) {
-                if (err) {
+            console.log("ddd======", tiresQuery);
+            db.getConnection((err, connection) => {
+                connection.query(tiresQuery, function (err, result) {
+                    if (err) {
+                        connection.release();
+                        reject(err);
+                    }
+                    response.tiresList = result;
                     connection.release();
-                    reject(err);
-                }
-                response.tiresList = result;
-                connection.release();
-                resolve(JSON.stringify(response))
+                    resolve(JSON.stringify(response))
+                })
             })
-        })
 
     })
 }
