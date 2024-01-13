@@ -178,6 +178,15 @@ export async function getShopData(queryParam) {
                     tiresQuery += ` AND mod_tires_prices.brand IN (${brandString})`;
                 };
             }
+            if (queryParam.studded) {
+                const isStuddedArr = JSON.parse(queryParam.studded);
+                if (isStuddedArr[0] === 'studded') {
+                    tiresQuery += ` AND mod_tires_prices.param IN ('шип', 'XL,шип')`
+                }
+                else if (isStuddedArr[0] === 'studless') {
+                    tiresQuery += ` AND mod_tires_prices.param NOT IN ('шип', 'XL,шип')`
+                }
+            } 
             db.getConnection((err, connection) => {
                 connection.query(tiresQuery, function (err, result) {
                     if (err) {
