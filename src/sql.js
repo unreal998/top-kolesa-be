@@ -263,7 +263,7 @@ async function addNewOrder(orderItems, id, orderId) {
                 `'${item.smsText}', '${item.smsSendAt}', '${item.createdAt}', '${item.updatedAt}'` +
                 `)`, function(err, result) {
                     if (err) {
-                        db.release();
+                        connection.release();
                         reject(err);
                     }
                     // now we need to pass all the our cart items to the created order
@@ -280,10 +280,10 @@ async function addNewOrder(orderItems, id, orderId) {
                         `${item.quantity}, ${item.priceBuy}, ${item.priceSell}, '${item.createdAt}',` +
                         `'${item.updatedAt}')`, function(err, result) {
                             if (err) {
-                                db.release();
+                                connection.release();
                                 reject(err);
                             }
-                            db.release();
+                            connection.release();
                             resolve();
                         })
                     })
