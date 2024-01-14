@@ -248,8 +248,8 @@ export async function getItemData() {
 async function addNewOrder(orderItems, id, orderId) {
     const item = orderItems[0]; // first we create an order with single id
     return new Promise( (resolve, reject) => {
-        db.getConnection((db) => {
-            db.query(`INSERT INTO mod_orders VALUES(` +
+        db.getConnection((err, connection) => {
+            connection.query(`INSERT INTO mod_orders VALUES(` +
                 `${orderId}, ${item.userId}, ${item.statusId}, ${item.customerId},` +
                 `${item.cityId}, ${item.paymentStatusId}, ${item.shipCompId}, ${item.paymentId},` +
                 `${item.paymentCost}, ${item.paymentCostType}, ${item.shipmentId}, ${item.shipmentCost},` +
@@ -269,7 +269,7 @@ async function addNewOrder(orderItems, id, orderId) {
                     // now we need to pass all the our cart items to the created order
                     orderItems.forEach((item) => {
                         id++
-                        db.query(`INSERT INTO mod_orders_content VALUES(` +
+                        connection.query(`INSERT INTO mod_orders_content VALUES(` +
                         `${id}, ${orderId}, ${item.brandId}, ${item.modelId}, ${item.sizeId},` +
                         `${item.locationId}, ${item.supplierId}, ${item.paymentId}, ${item.paymentCost},` +
                         `${item.paymentCostType}, '${item.paymentComment}', ${item.shipmentId}, ${item.shipmentCost},` +
