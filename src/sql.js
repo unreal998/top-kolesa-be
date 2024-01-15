@@ -3,7 +3,7 @@ import db from './database.js';
 export async function getOrderData(orderId) {
     return new Promise( (resolve, reject) =>
         db.getConnection((err, connection) => {
-            connection.queryData('SELECT * FROM `mod_orders` WHERE `id` = ' + orderId + ' ORDER BY `id`  DESC ', (err, result) => {
+            connection.query('SELECT * FROM `mod_orders` WHERE `id` = ' + orderId + ' ORDER BY `id`  DESC ', (err, result) => {
                 if (err) {
                     connection.release();
                     reject(err)
@@ -18,7 +18,7 @@ export async function getOrderData(orderId) {
 export async function getOrderContentData(orderId) {
     return new Promise( (resolve, reject) =>
         db.getConnection((err, connection) => {
-            connection.queryData('SELECT * FROM `mod_orders_content` WHERE `order_id` = ' + orderId + ' ORDER BY `id`  DESC ', (err, result) => {
+            connection.query('SELECT * FROM `mod_orders_content` WHERE `order_id` = ' + orderId + ' ORDER BY `id`  DESC ', (err, result) => {
                 if (err) {
                     connection.release();
                     reject(err)
