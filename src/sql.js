@@ -187,7 +187,6 @@ export async function getShopData(queryParam) {
                     tiresQuery += ` AND mod_tires_prices.param NOT IN ('шип', 'XL,шип')`
                 }
             } 
-            console.log(tiresQuery)
             db.getConnection((err, connection) => {
                 connection.query(tiresQuery, function (err, result) {
                     if (err) {
