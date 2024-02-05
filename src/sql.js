@@ -178,15 +178,32 @@ export async function getShopData(queryParam) {
                     tiresQuery += ` AND mod_tires_prices.brand IN (${brandString})`;
                 };
             }
-            if (queryParam.studded) {
-                const isStuddedArr = JSON.parse(queryParam.studded);
-                if (isStuddedArr[0] === 'studded') {
+            if (queryParam.vechileType) {
+                if (queryParam.vechileType === 'studded') {
                     tiresQuery += ` AND mod_tires_prices.param IN ('шип', 'XL,шип')`
                 }
-                else if (isStuddedArr[0] === 'studless') {
+                else if (queryParam.vechileType === 'studless') {
                     tiresQuery += ` AND mod_tires_prices.param NOT IN ('шип', 'XL,шип')`
                 }
-            } 
+            }
+            if (queryParam.vechileType) {
+                let vechileType = '';
+                switch(queryParam.vechileType) {
+                    case 'light':
+                        vechileType = " AND diametr NOT LIKE '%C' AND diametr NOT LIKE '%\.%'";
+                        break;
+                    case 'lightTruck':
+                        vechileType = " AND diametr LIKE '%C'";
+                        break;
+                    case 'cargo':
+                        vechileType = " AND diametr LIKE '%\.%'";
+                        break;
+                    default:
+                        throw new Error('unknown vechile type param')
+                }
+                tiresQuery += vechileType
+                    
+            }
             db.getConnection((err, connection) => {
                 connection.query(tiresQuery, function (err, result) {
                     if (err) {
