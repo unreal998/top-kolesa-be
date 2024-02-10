@@ -178,11 +178,11 @@ export async function getShopData(queryParam) {
                     tiresQuery += ` AND mod_tires_prices.brand IN (${brandString})`;
                 };
             }
-            if (queryParam.vechileType) {
-                if (queryParam.vechileType === 'studded') {
+            if (queryParam.studded) {
+                if (queryParam.studded === 'studded') {
                     tiresQuery += ` AND mod_tires_prices.param IN ('шип', 'XL,шип')`
                 }
-                else if (queryParam.vechileType === 'studless') {
+                else if (queryParam.studded === 'studless') {
                     tiresQuery += ` AND mod_tires_prices.param NOT IN ('шип', 'XL,шип')`
                 }
             }
