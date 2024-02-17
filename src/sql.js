@@ -204,6 +204,7 @@ export async function getShopData(queryParam) {
                 tiresQuery += vechileType
                     
             }
+            tiresQuery += ` AND ${`price_type`} = 1`
             db.getConnection((err, connection) => {
                 connection.query(tiresQuery, function (err, result) {
                     if (err) {
