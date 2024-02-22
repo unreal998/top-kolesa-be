@@ -52,7 +52,7 @@ export async function getFilterData() {
                 }
             }
             responseData.tireSizes.width = widthArray;
-            connection.execute(`SELECT DISTINCT diametr FROM ${`mod_tires_sizes`}`, function (err, result) {
+            connection.execute(`SELECT DISTINCT diametr FROM ${`mod_tires_sizes`} ORDER BY diametr`, function (err, result) {
                 if (err) {
                     connection.release();
                     reject(err);
@@ -62,7 +62,7 @@ export async function getFilterData() {
                     diametrArray.push(item.diametr)
                 })
                 responseData.tireSizes.diametr = diametrArray;
-                connection.execute(`SELECT DISTINCT height FROM ${`mod_tires_sizes`}`, function (err, result) {
+                connection.execute(`SELECT DISTINCT height FROM ${`mod_tires_sizes`} ORDER BY height`, function (err, result) {
                     if (err) {
                         connection.release();
                         reject(err);
@@ -72,7 +72,7 @@ export async function getFilterData() {
                         heightArray.push(item.height)
                     })
                     responseData.tireSizes.height = heightArray;
-                    connection.execute(`SELECT DISTINCT speed FROM ${`mod_tires_sizes`}`, function (err, result) {
+                    connection.execute(`SELECT DISTINCT speed FROM ${`mod_tires_sizes`} ORDER BY speed`, function (err, result) {
                         if (err) {
                             connection.release();
                             reject(err);
@@ -82,7 +82,7 @@ export async function getFilterData() {
                             speedArray.push(item.speed)
                         })
                         responseData.tireSizes.speed = speedArray;
-                        connection.execute(`SELECT DISTINCT weight FROM ${`mod_tires_sizes`}`, function (err, result) {
+                        connection.execute(`SELECT DISTINCT weight FROM ${`mod_tires_sizes`} ORDER BY weight`, function (err, result) {
                             if (err) {
                                 connection.release();
                                 reject(err);
@@ -92,7 +92,7 @@ export async function getFilterData() {
                                 weightArray.push(item.weight)
                             })
                             responseData.tireSizes.weight = weightArray;
-                            connection.execute(`SELECT DISTINCT brand FROM ${`mod_tires_prices`}`, function (err, result) {
+                            connection.execute(`SELECT DISTINCT brand FROM ${`mod_tires_prices`} ORDER BY brand`, function (err, result) {
                                 if (err) {
                                     connection.release();
                                     reject(err);
@@ -102,7 +102,7 @@ export async function getFilterData() {
                                     brandsArray.push(item.brand)
                                 })
                                 responseData.tireSizes.brands = brandsArray;
-                                connection.execute(`SELECT DISTINCT price_uah FROM ${`mod_tires_prices`}`, function (err, result) {
+                                connection.execute(`SELECT DISTINCT price_uah FROM ${`mod_tires_prices`} ORDER BY price_uah`, function (err, result) {
                                     if (err) {
                                         connection.release();
                                         reject(err);
