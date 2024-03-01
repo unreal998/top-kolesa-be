@@ -137,7 +137,7 @@ export async function getShopData(queryParam) {
             if (queryParam.price) {
                 const minPrice = queryParam.price.split('-')[0];
                 const maxPrice = queryParam.price.split('-')[1];
-                tiresQuery += ` AND mod_tires_prices.price_uah > ${minPrice} AND mod_tires_prices.price_uah < ${maxPrice}`
+                tiresQuery += ` AND mod_tires_prices.price_uah >= ${minPrice} AND mod_tires_prices.price_uah <= ${maxPrice}`
             }
             if (queryParam.diametr && queryParam.diametr !== '""') {
                 tiresQuery += ` AND mod_tires_prices.diametr = '${JSON.parse(queryParam.diametr)}'`
